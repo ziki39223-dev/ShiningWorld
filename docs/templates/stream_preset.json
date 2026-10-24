@@ -1,0 +1,9 @@
+{
+  "cell": 1,
+  "name": "正派小队视角",
+  "faction": "正派小队",
+  "perspective": "第三人称限知，跟随队长林澈",
+  "cooldown_s": 90,
+  "tags": ["faction:正派小队", "char:林澈"],
+  "note": "cell=5 固定为主线，其余 8 格为支线；cooldown_s 省略则用 config.stream_defaults.cooldown_s"
+}

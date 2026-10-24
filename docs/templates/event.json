@@ -1,0 +1,9 @@
+{
+  "title": "密信抵达",
+  "content": "暗流收到内城布防图，要价极高，只接受当面交易。",
+  "visible_factions": ["暗流", "正派小队"],
+  "active_streams": [],
+  "tags": ["event:密信抵达"],
+  "ttl_rounds": 3,
+  "note": "ttl_rounds=0 表示长期有效；active_streams 为空表示对所有支线生效"
+}

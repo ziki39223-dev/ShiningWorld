@@ -1,0 +1,14 @@
+# 运行时生成（不入库）
+world-bible/
+vector_db/
+streams/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+build/
+dist/

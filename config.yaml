@@ -1,0 +1,138 @@
+# 闪亮大世界 ShiningWorld · 服务配置
+# 说明：
+#   1. 付费 API + 免费 API 池统一写成 providers 列表，按 priority 升序优先使用。
+#   2. 任一服务商失败自动降级到下一个，可用 set_provider_quota 动态调限流。
+#   3. api_key 建议用环境变量注入：api_key: "${SW_KEY_XXX}"，
+#      启动前 export SW_KEY_XXX=sk-xxx 即可（Windows: set SW_KEY_XXX=sk-xxx）。
+
+workspace_root: "."          # 相对本文件所在目录；也可写绝对路径
+default_provider: "primary-paid"
+use_mock_provider: true      # 无真实 API 时自动挂 mock-local，保证全链路可跑
+
+mainline_outline: |
+  雾港城在第七日封锁，三方势力围绕「潮汐钟」展开争夺。
+  主角团必须在钟声第三次响起之前，把证物送出内城。
+
+providers:
+  - name: "primary-paid"
+    kind: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: "${SW_KEY_PRIMARY}"
+    model: "gpt-4o-mini"
+    tier: "paid"
+    priority: 10
+    max_concurrency: 3
+    rpm: 120
+    timeout_s: 60
+
+  - name: "relay-paid"
+    kind: "openai"
+    base_url: "https://relay.example.com/v1"
+    api_key: "${SW_KEY_RELAY}"
+    model: "gpt-4o-mini"
+    tier: "paid"
+    priority: 30
+    max_concurrency: 2
+    rpm: 60
+    timeout_s: 45
+
+  - name: "free-pool-a"
+    kind: "openai"
+    base_url: "https://free-a.example.com/v1"
+    api_key: "${SW_KEY_FREE_A}"
+    model: "gpt-4o-mini"
+    tier: "free"
+    priority: 80
+    max_concurrency: 1
+    rpm: 20
+    timeout_s: 30
+
+  - name: "free-pool-b"
+    kind: "openai"
+    base_url: "https://free-b.example.com/v1"
+    api_key: "${SW_KEY_FREE_B}"
+    model: "gpt-4o-mini"
+    tier: "free"
+    priority: 90
+    max_concurrency: 1
+    rpm: 20
+    timeout_s: 30
+
+  - name: "mock-local"
+    kind: "mock"
+    model: "mock-1"
+    tier: "free"
+    priority: 999
+
+retrieval:
+  label_preferred: true      # 标签精确检索优先
+  vector_fallback: true      # 向量语义兜底
+  vector_dim: 512
+  vector_top_k: 6
+  tag_top_k: 20
+  chunk_chars: 400
+
+snapshot:
+  trigger_chars: 6000        # 单支线累计多少字触发快照提案
+  keep_recent_chars: 1200    # 压缩后保留的近期原文
+  max_snapshots_in_context: 2
+
+stream_defaults:
+  cooldown_s: 90
+  max_round_chars: 900
+  auto_step: true
+
+server:
+  host: "127.0.0.1"
+  port: 8791
+  sse_path: "/sse"
+  message_path: "/messages/"
+  log_level: "INFO"
+
+# 九宫格预设：DSH 主控台启动后按此表 create_narrative_stream
+streams_preset:
+  - cell: 1
+    name: "正派小队视角"
+    faction: "正派小队"
+    perspective: "第三人称限知，跟随队长林澈"
+    tags: ["faction:正派小队"]
+  - cell: 2
+    name: "反派议事厅视角"
+    faction: "反派议事厅"
+    perspective: "全知但只写议事厅内可见信息"
+    tags: ["faction:反派议事厅"]
+  - cell: 3
+    name: "中立说书人视角"
+    faction: "中立"
+    perspective: "俯视全景，只陈述已发生事实"
+    tags: ["faction:中立"]
+  - cell: 4
+    name: "密探/信使视角"
+    faction: "密探网"
+    perspective: "单线跟随，信息量受限于信件内容"
+    tags: ["faction:密探网"]
+  - cell: 5
+    name: "主线大纲"
+    faction: "公共"
+    perspective: "主线推进，默认高亮"
+    tags: ["plot:主线大纲"]
+  - cell: 6
+    name: "暗流伏笔线"
+    faction: "暗流"
+    perspective: "幕后视角，只露线索不揭底"
+    tags: ["faction:暗流"]
+  - cell: 7
+    name: "守卫/城防视角"
+    faction: "城防军"
+    perspective: "城墙视角，关注出入城与布防"
+    tags: ["faction:城防军"]
+  - cell: 8
+    name: "隐士/旅人视角"
+    faction: "旅人"
+    perspective: "游走视角，串起地理与传说"
+    tags: ["faction:旅人"]
+  - cell: 9
+    name: "边疆战事视角"
+    faction: "边疆军"
+    perspective: "战场视角，节奏更快"
+    tags: ["faction:边疆军"]

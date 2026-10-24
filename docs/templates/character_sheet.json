@@ -1,0 +1,19 @@
+{
+  "char_id": "char_0001",
+  "name": "林澈",
+  "identity": "正派小队队长",
+  "core_belief": "不带任何人掉队",
+  "traits": {
+    "stable": ["冷静", "谨慎"],
+    "temporary": []
+  },
+  "speech_style": "简短克制；禁用词汇：混蛋、去死",
+  "bond": [
+    { "target": "苏晚", "relation": "队友", "立场": "守护" }
+  ],
+  "secret": "他曾在议事厅当过三年暗桩",
+  "secret_visible_to": ["暗流"],
+  "evolution_log": [],
+  "hard_rule": ["禁止背后偷袭", "禁止抛弃队友"],
+  "tags": ["char:林澈", "faction:正派小队"]
+}
